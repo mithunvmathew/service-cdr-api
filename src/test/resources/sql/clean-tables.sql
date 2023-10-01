@@ -1,0 +1,1 @@
+TRUNCATE TABLE cdr.charging_data;

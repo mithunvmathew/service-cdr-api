@@ -1,0 +1,81 @@
+plugins {
+	id("org.flywaydb.flyway") version "9.3.1"
+	id 'java'
+	id 'org.springframework.boot' version '3.1.2'
+	id 'io.spring.dependency-management' version '1.1.2'
+	id 'jacoco'
+	id 'application'
+}
+
+group = 'com.mvm'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+application {
+	mainClass = 'com/mvm/servicecdrapi/ServiceCdrApiApplication'
+}
+
+jacoco {
+	applyTo run
+}
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'com.github.mkyrychenko:vin-utils:1.1.0'
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+
+	implementation  'org.mapstruct:mapstruct:1.5.1.Final'
+	implementation  'org.projectlombok:lombok:1.18.20'
+	annotationProcessor "org.mapstruct:mapstruct-processor:1.5.1.Final"
+	annotationProcessor "org.projectlombok:lombok:1.18.20"
+	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+	runtimeOnly("org.postgresql:postgresql")
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+	testImplementation 'org.testcontainers:postgresql'
+	testImplementation("org.testcontainers:testcontainers")
+	testImplementation("org.testcontainers:junit-jupiter")
+	testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
+}
+
+
+tasks.named('test', Test) {
+	useJUnitPlatform {
+		excludeTags("integrationTest")
+	}
+
+	testLogging {
+		events("passed", "skipped", "failed")
+	}
+}
+tasks.create('integrationTest', Test) {
+	useJUnitPlatform {
+		includeTags("integrationTest")
+	}
+
+	testLogging {
+		events("passed", "skipped", "failed")
+	}
+}
+
+tasks.register('applicationCodeCoverageReport', JacocoReport) {
+	executionData test, integrationTest
+	sourceSets sourceSets.main
+
+}
+
+
